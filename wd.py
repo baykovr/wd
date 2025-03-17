@@ -2,24 +2,36 @@
 import os
 import sys
 
-rc = os.path.expanduser("~/.wdrc")
+# warp directory run commands
+wd = os.path.expanduser("~/.wdrc")
+
+def usage():
+    print("wd - warp directory")
+    print("usage: ")
+    print("\twd [alias] ; warp to alias")
+
+def load():
+    with open(wd) as fp:
+        ln = fp.read().split()
+        for l in ln:
+            l = l.split("=")
+            if sys.argv[1] == l[0]:
+                if os.path.isdir(l[1]):
+                    print(l[1])
+                else:
+                    sys.exit(2)
 
 def main():
+    # just check the count 
     if len(sys.argv) != 2:
-        sys.exit(0)
+        usage()
+        sys.exit(1)
     
-    if sys.argv[1] == "":
+    alias = sys.argv[1]
+    if alias == "":
         return os.path.expanduser("~")
 
-    if os.path.isfile(rc):
-        with open(rc) as fp:
-            ln = fp.read().split()
-            for l in ln:
-                l = l.split("=")
-                if sys.argv[1] == l[0]:
-                    if os.path.isdir(l[1]):
-                        print(l[1])
-                    else:
-                        sys.exit(2)
+    load()
+
 if __name__ == '__main__':
     main()
